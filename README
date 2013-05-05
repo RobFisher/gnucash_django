@@ -1,0 +1,93 @@
+GnuCash_Django is a web interface for GnuCash using Django. It uses the Python
+bindings to the the GnuCash API and does not use Django's database features.
+
+
+License
+-------
+
+License is GPLv2.
+
+
+Status
+------
+
+Just starting out. Not useful except as an example of how this can work. Start
+by looking at views.py to see how the API is used.
+
+
+GnuCash Python API Installation
+-------------------------------
+
+# I found I needed to build GnuCash 2.4 from source and use the following
+# steps to get the Python binding working on Ubuntu 12.04:
+cd gnucash
+./autogen.sh
+./configure --prefix=/path/to/install/to/gnucash --enable-compile-warnings \
+    --with-html-engine=webkit --disable-error-on-warning \
+     --enable-python-bindings
+make
+sudo make install
+sudo mkdir /usr/local/python2.7/site-packages/gnucash
+sudo cp -R src/optional/python-bindings/* \
+    /usr/local/lib/python2.7/site-packages/gnucash/
+sudo cp src/optional/python-bindings/.libs/*so* \
+    /usr/local/lib/python2.7/site-packages/gnucash/
+
+# /usr/local/lib/python2.7/site-packages must be in sys.path for
+# import gnucash to work. This is done in session_manager.py
+
+
+Django Installation
+-------------------
+
+# These instructions work on Ubuntu 12.04. If you don't have a Django
+# installation already:
+
+sudo apt-get install python-django libapache2-mod-wsgi
+cd /path_readable_by_apache/
+django-admin startproject django_installation
+
+# Make a file called /etc/apache2/sites_available/django and put this in it:
+
+WSGIScriptAlias /django /path_readable_by_apache/django_installation/django.wsgi
+
+# Make a file called /path_readable_by_apache/django_installation/django.wsgi
+# and put this in it:
+
+import os
+import sys
+
+paths = ['/path_readable_by_apache', '/path_readable_by_apache/django_installation']
+for path in paths:
+    if path not in sys.path:
+        sys.path.append(path)
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'django_installation.settings'
+
+import django.core.handlers.wsgi
+application = django.core.handlers.wsgi.WSGIHandler()
+
+
+GnuCash_Django installation
+---------------------------
+
+# Copy the source files into:
+/path_readable_by_apache/django_installation/gnucash_django/
+
+# Edit your /path_readable_by_apache/django_installation/settings.py. Add the
+# following to the TEMPLATE_DIRS list:
+'/path_readable_by_apache/django_installation/gnucash_django/templates',
+
+# Add the following to the INSTALLED_APPS list:
+'gnucash_django',
+
+# Copy the gnucash_config_example.py file:
+cd /path_readable_by_apache/django_installation/gnucash_django/
+cp gnucash_config_example.py gnucash_config.py
+
+# Edit gnucash_config.py to configure your gnucash file or database.
+
+# Finally, as a workaround (FIXME this is probably not correct):
+sudo mkdir /var/www/.gnucash
+sudi chmod a+rw /var/www/.gnucash
+
