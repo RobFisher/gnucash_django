@@ -5,7 +5,7 @@ bindings to the the GnuCash API and does not use Django's database features.
 License
 -------
 
-License is GPLv2.
+License is GPLv2. See LICENSE.
 
 
 Status
