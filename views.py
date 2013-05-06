@@ -11,7 +11,9 @@ import gnucash
 
 def append_accounts(accounts, accounts_list):
     for a in accounts:
-        accounts_list.append(gnucash.gnucash_core_c.xaccAccountGetName(a))
+        full_name = gnucash.gnucash_core_c.gnc_account_get_full_name(a)
+        name = gnucash.gnucash_core_c.xaccAccountGetName(a)
+        accounts_list.append((name, full_name))
         children = gnucash.gnucash_core_c.gnc_account_get_children(a)
         if len(children) > 0:
             accounts_list.append('+++')
@@ -48,3 +50,16 @@ def safe_index(request):
 def index(request):
     return safe_call(safe_index, request)
 
+
+def safe_account(request, full_name):
+    s = session_manager.get_session()
+    root_account = s.book.get_root_account()
+    account = root_account.lookup_by_full_name(full_name)
+    parameters = {'full_name': full_name,
+                  'name': account.GetName(),
+                  'balance': account.GetBalance().to_double()}
+    return render_to_response('account.html', parameters)
+
+
+def account(request, full_name):
+    return safe_call(safe_account, request, full_name)

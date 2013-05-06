@@ -18,7 +18,7 @@
     {% if entry == '---' %}
         </ul>
     {% else %}
-        <li>{{ entry }}</li>
+        <li><a href="account/{{ entry.1 }}/">{{ entry.0 }}</a></li>
     {% endif %}
 {% endif %}
 
