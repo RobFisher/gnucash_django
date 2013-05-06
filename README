@@ -91,3 +91,26 @@ cp gnucash_config_example.py gnucash_config.py
 sudo mkdir /var/www/.gnucash
 sudi chmod a+rw /var/www/.gnucash
 
+
+Security
+--------
+
+This Django app does not attempt to provide any security. Take care not to
+publish your accounts on the Internet. It is possible that this app exposes
+the GnuCash API to the Internet and thereby allows attackers to compromise
+your machine. It is possible that men in the middle can read your network
+packets and see your accounts.
+
+Suggested precautions:
+
+* Use web server authentication features to control access to the pages
+  served by Django such as, on Apache:
+
+  Order deny,allow
+  AuthUserFile /etc/apache2/.htpasswd
+  AuthName "Restricted Access"
+  AuthType Basic
+  require user someuser
+
+* Only allow access via https.
+
