@@ -20,7 +20,8 @@ def get_session():
 
 def close_session():
     global s
-    s.end()
-    s.destroy()
-    s = None
+    if s:
+        s.end()
+        s.destroy()
+        s = None
 

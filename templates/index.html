@@ -4,16 +4,24 @@
 <html>
 <head>
     <title>GnuCash - {{ title }}</title>
-    <link rel="stylesheet" type="text/css" href="/gnucash/static/camel.css" />
+    <link rel="stylesheet" type="text/css" href="static/gnucash.css" />
 </head>
 
 <body>
 <h1>GnuCash - {{ title }}</h1>
-<p>Accounts</p>
 
 <ul>
-{% for account in account_names %}
-<li>{{ account }}</li>
+{% for entry in accounts_list %}
+{% if entry == '+++' %}
+<ul>
+{% else %}
+    {% if entry == '---' %}
+        </ul>
+    {% else %}
+        <li>{{ entry }}</li>
+    {% endif %}
+{% endif %}
+
 {% endfor %}
 </ul>
 
